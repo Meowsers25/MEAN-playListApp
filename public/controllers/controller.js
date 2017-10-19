@@ -1,59 +1,50 @@
-//code to connect the 2 files (controller.js and index.html)
 var myApp = angular.module('myApp', []);
 myApp.controller('AppCtrl', ['$scope', '$http',
 function($scope, $http) {
-    console.log("Hello from controller");
+  console.log("hello world from controller");
+//}]);
 
-//adding refresh function
-var refresh = function () {
-    $http.get('/contactlist').then(function (response) {
-        $scope.contactlist = response.data;
-        $scope.contact = {};
-        //*
-    }, function (error) {
-    });
+var refresh = function() {
+$http.get('/playlist').then(function (response) {
+  console.log("I got the data I requested");
+  $scope.playlist = response.data; //needed to add .data
+  $scope.artist = null; //null clears the input boxes
+  });
+};
 
-}
+refresh();
+
+$scope.addArtist = function() {
+  console.log($scope.artist);
+  $http.post('/playlist', $scope.artist).then(function (response) {
+    console.log(response);
     refresh();
+  });
+};
 
-       //**define and test addContact function
-       $scope.addContact = function() {
-        console.log($scope.contact);
-        //use .then instead of .success
-        $http.post('/contactlist', $scope.contact).then(function(response) {
-            console.log(response);
-            refresh();
-        }, function (error) {
-
-        });
-    }
 $scope.remove = function(id) {
-    console.log(id);
-    $http.delete('/contactlist/' + id).then(function(response) {
-        refresh();
-    }, function (error) {
-    });
-}
+  console.log(id);
+  $http.delete('/playlist/' + id).then(function (response) {
+    refresh();
+  });
+};
 
 $scope.edit = function(id) {
-    console.log(id);
-    $http.get('/contactlist/' + id).then(function(response) {
-        $scope.contact = response.data;
-    },function(error) {
-    });
-}
+  console.log(id);
+  $http.get('/playlist/' + id).then(function (response) {
+    $scope.artist = response.data;//add .data
+  });
+};
 
 $scope.update = function() {
-    console.log($scope.contact._id);
-    $http.put('/contactlist/' + $scope.contact._id, $scope.contact).then(function(response) {
-        console.log(response.data);
-        refresh();
-    }, function(error) {
-    });
-}
+  console.log($scope.artist._id);
+  $http.put('/playlist/' + $scope.artist._id, $scope.artist).then(function (response) {
+    refresh();
+  });
+};
 
-$scope.clear = function() {
-    $scope.contact = {};
+$scope.deselect = function() {
+  $scope.artist = null;
 }
 
 }]);
